@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>IoTGuard — Home</title>
+  <meta name="description" content="IoTGuard: AI-driven intrusion detection for IoT." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#0b0f16; --panel:#111827; --panel-alt:#0f1520;
+      --text:#e5e7eb; --muted:#9ca3af; --accent:#60a5fa; --line:#1f2937;
+      --radius:16px; --space:clamp(16px, 2vw, 28px); --max:1100px;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#0a0f18;color:var(--text)}
+    a{color:var(--text);text-decoration:none}
+    h1,h2,h3{margin:0 0 12px}
+    p{color:var(--text);opacity:.9;line-height:1.6}
+    .muted{color:var(--muted)}
+    .container{max-width:var(--max);margin:0 auto;padding:0 var(--space)}
+    .section{padding:72px 0}
+    .section.alt{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.05))}
+
+    /* -------- NAV (glassy + animated indicator) ---------- */
+    header.nav{
+      position:sticky; top:0; z-index:50;
+      background: rgba(8,12,18,.65);
+      backdrop-filter: saturate(140%) blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,.1);
+    }
+    header.nav::after{
+      content:""; position:absolute; left:0; right:0; bottom:0; height:2px;
+      background: linear-gradient(90deg,#60a5fa,#a78bfa); opacity:.45;
+    }
+    .nav-inner{display:flex;align-items:center;justify-content:space-between;padding:10px 0}
+    .brand{
+      font-weight:900; font-size:1.18rem; letter-spacing:.6px; display:inline-flex; gap:8px; align-items:center;
+      transition: transform .3s ease, text-shadow .3s ease;
+    }
+    .brand::before{
+      content:""; width:8px; height:8px; border-radius:999px;
+      background: linear-gradient(90deg,#60a5fa,#a78bfa); box-shadow:0 0 12px rgba(96,165,250,.6);
+    }
+    .brand:hover{ animation: brandBob 1.2s ease-in-out infinite alternate; text-shadow:0 0 18px rgba(96,165,250,.45) }
+    @keyframes brandBob{ from{ transform: translateX(0) } to{ transform: translateX(7px) } }
+
+    .menu{ position:relative }
+    .menu a{display:inline-block;padding:10px 14px;margin:0 4px;color:var(--text);opacity:.85;border-radius:8px}
+    .menu a:hover{opacity:1;background:rgba(255,255,255,.04)}
+    .menu a.is-active{ color:#dbeafe; text-shadow:0 0 10px rgba(96,165,250,.25) }
+    .menu .indicator{
+      position:absolute; left:10px; bottom:6px; height:2px; width:0;
+      background: linear-gradient(90deg,#60a5fa,#a78bfa);
+      border-radius:2px; opacity:.9; pointer-events:none;
+      transition: left .28s ease, width .28s ease, opacity .28s ease;
+    }
+    .menu a::after{ content:none !important; }
+
+    /* -------- HERO ---------- */
+    .hero{display:grid;place-items:center;min-height:60vh;padding:80px var(--space);position:relative;overflow:hidden}
+    .hero-inner{text-align:center;max-width:820px}
+    .hero.fancy-bg{
+      background:
+        radial-gradient(60% 120% at 20% 0%, rgba(96,165,250,.20), transparent 60%),
+        radial-gradient(60% 120% at 80% 10%, rgba(139,92,246,.15), transparent 60%),
+        linear-gradient(180deg, #0b1220, transparent);
+    }
+    .hero h1{
+      font-size: clamp(40px, 6.2vw, 68px);
+      font-weight: 800; letter-spacing:.2px;
+      background: linear-gradient(90deg,#c7d2fe,#a5b4fc 40%,#a78bfa);
+      -webkit-background-clip:text; background-clip:text; color:transparent;
+      animation: heroIn .9s ease both;
+    }
+    .accent{color:transparent; background: linear-gradient(90deg,#60a5fa,#93c5fd);
+      -webkit-background-clip:text; background-clip:text; text-shadow:0 0 14px rgba(96,165,250,.30);
+      display:inline-block; animation: float 6s ease-in-out infinite
+    }
+    .accent:hover{ animation: bobY 1.2s ease-in-out infinite alternate; text-shadow:0 0 22px rgba(96,165,250,.5) }
+    .subtitle{color:var(--muted);font-size:1.1rem;margin:14px 0 26px; animation: heroIn .9s .08s ease both}
+
+    /* Buttons */
+    .btn{display:inline-block;background:var(--accent);color:#041019;font-weight:700;
+      padding:12px 18px;border-radius:10px;transition:.2s transform; position:relative; overflow:hidden; animation: heroIn .9s .16s ease both; border:1px solid transparent}
+    .btn:hover{transform:translateY(-1px)}
+    .btn:active{transform: translateY(0)!important; scale:.98}
+    .btn::after{content:""; position:absolute; width:8px; height:8px; border-radius:999px;
+      background:rgba(255,255,255,.6); transform: scale(0); opacity:0; pointer-events:none;
+      left:var(--x,50%); top:var(--y,50%); transition: transform .5s ease, opacity .6s ease}
+    .btn.rippling::after{ transform: scale(25); opacity:.0 }
+    .btn.ghost{ background: transparent; color: var(--text); border:1px solid var(--line); }
+    .btn.tiny{padding:8px 12px; border-radius:10px; font-weight:700}
+    .btn.pill{ border-radius: 999px; padding: 10px 16px; font-weight: 700; background: linear-gradient(90deg,#60a5fa,#a78bfa); color:#0a0f18; border:none }
+    .btn.pill.large{ padding: 12px 18px; font-size: 1.02rem }
+    .cta-row{display:flex; gap:12px; justify-content:center; flex-wrap:wrap}
+
+    /* Reveal */
+    .reveal{opacity:0; transform:translateY(16px); transition:opacity .7s ease, transform .7s ease}
+    .reveal.show{opacity:1; transform:none}
+    .delay-1{transition-delay:.07s}.delay-2{transition-delay:.14s}.delay-3{transition-delay:.21s}.delay-4{transition-delay:.28s}
+    @keyframes heroIn{ from{opacity:0; transform:translateY(14px)} to{opacity:1; transform:none} }
+    @keyframes float{ 0%,100%{transform: translateY(0)} 50%{transform: translateY(-4px)} }
+    @keyframes bobY{ from{ transform: translateY(0) } to{ transform: translateY(-6px) } }
+
+    /* Section titles */
+    .container-narrow{ max-width: 980px; margin: 0 auto; }
+    .section-title{ text-align:center; margin: 0 0 6px; font-size: clamp(24px, 3.4vw, 34px) }
+    .section-title.gradient{
+      background: linear-gradient(90deg,#93c5fd,#a78bfa);
+      -webkit-background-clip:text; background-clip:text; color: transparent;
+    }
+    .section-subtitle{ text-align:center; color: var(--muted); margin: 0 0 18px }
+
+    /* Key Features glossy cards */
+    .kf-grid{
+      display:grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr));
+      gap: clamp(14px,2vw,22px); margin-top: 16px;
+    }
+    .kf-card{
+      background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.00)),
+                  linear-gradient(180deg, var(--panel), var(--panel-alt));
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 18px; padding: 20px;
+      box-shadow: 0 10px 24px rgba(0,0,0,.28);
+      transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+    }
+    .kf-card:hover{ transform: translateY(-3px); border-color: rgba(96,165,250,.35); box-shadow: 0 16px 32px rgba(0,0,0,.34) }
+    .kf-icon{
+      width: 44px; height: 44px; display:grid; place-items:center; color:#dbeafe;
+      border-radius: 12px; margin-bottom: 10px;
+      background: linear-gradient(180deg, rgba(96,165,250,.30), rgba(96,165,250,.12));
+      box-shadow: inset 0 0 0 1px rgba(96,165,250,.35);
+    }
+    .kf-card h3{ margin: 2px 0 6px; font-size: 18px }
+    .kf-card p{ margin: 0 0 12px; opacity: .95 }
+    .kf-card .learn{ color: #93c5fd }
+
+    /* Documents (homepage) */
+    .docs-home-grid{
+      display:grid; grid-template-columns: repeat(auto-fit, minmax(300px,1fr));
+      gap: clamp(16px,2vw,24px); margin-top: 16px;
+    }
+    .docx-card{
+      background: linear-gradient(180deg, var(--panel), var(--panel-alt));
+      border: 1px solid rgba(168,85,247,.25);
+      border-radius: 18px; padding: 18px;
+      box-shadow: 0 10px 24px rgba(0,0,0,.28);
+      transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+    }
+    .docx-card:hover{ transform: translateY(-4px); border-color: rgba(168,85,247,.45); box-shadow: 0 16px 34px rgba(0,0,0,.36) }
+    .docx-head{ display:flex; align-items:center; gap:12px; margin-bottom:6px }
+    .docx-icon{
+      width: 40px; height: 40px; display:grid; place-items:center; color:#e9d5ff;
+      border-radius:12px; background: linear-gradient(180deg, rgba(167,139,250,.3), rgba(167,139,250,.12));
+      box-shadow: inset 0 0 0 1px rgba(167,139,250,.45);
+    }
+    .docx-card h3{ margin:0 0 6px }
+    .docx-card p{ margin:0 0 12px; opacity:.95 }
+    .docx-actions{ display:flex; gap:10px; align-items:center }
+
+    /* Live Simulation panel */
+    .section.no-pad{ padding-top: 24px; padding-bottom: 24px }
+    .sim-panel{
+      position: relative; border-radius: 26px;
+      padding: clamp(28px, 6vw, 48px);
+      background:
+        radial-gradient(80% 140% at 0% 0%, rgba(96,165,250,.18), transparent 60%),
+        radial-gradient(80% 140% at 100% 20%, rgba(167,139,250,.16), transparent 60%),
+        linear-gradient(180deg, #0d1330, #1a1045);
+      border: 1px solid rgba(168,85,247,.35);
+      box-shadow: 0 24px 60px rgba(0,0,0,.45);
+      overflow: hidden;
+      text-align: center;
+    }
+    .sim-panel::before{
+      content:""; position:absolute; inset:-10% -10% -10% -10%;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='rgba(255,255,255,0.06)' stroke-width='1'%3E%3Cpath d='M0 50 L200 50 M0 100 L200 100 M0 150 L200 150 M50 0 L50 200 M100 0 L100 200 M150 0 L150 200'/%3E%3C/g%3E%3C/svg%3E");
+      background-size: 220px 220px;
+      opacity: .45; filter: blur(1px);
+    }
+    .sim-title{ font-size: clamp(22px, 3vw, 32px); margin: 0 0 6px }
+    .sim-subtitle{ color:#cbd5e1; margin:0 0 14px }
+    .sim-cta{ display:flex; justify-content:center; margin-top: 8px }
+
+    /* Footer */
+    .footer{padding:28px 0;border-top:1px solid var(--line);background:rgba(5,8,12,.6);margin-top:40px}
+    .foot-grid{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+    .foot-links a{margin-left:14px}
+
+    .ambient-bg{ position: fixed; inset: 0; z-index: -1; pointer-events: none; }
+
+    @media (max-width:640px){
+      .menu a{padding:10px 10px}
+      .hero{min-height:54vh}
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Ambient animated background -->
+  <div class="ambient-bg" aria-hidden="true"></div>
+
+  <!-- Navbar -->
+  <header class="nav">
+    <div class="container nav-inner">
+      <a class="brand" href="index.html">IoTGuard</a>
+      <nav class="menu" id="mainMenu">
+        <a href="index.html">Home</a>
+        <a href="features.html">Features</a>
+        <a href="about.html">About</a>
+        <a href="documents.html">Documents</a>
+        <a href="references.html">References</a>
+        <a href="backlog.html">Backlog</a>
+        <span class="indicator" aria-hidden="true"></span>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero fancy-bg">
+    <div class="hero-inner">
+      <h1>IoTGuard: <span class="accent">AI-Driven Protection</span> for IoT</h1>
+      <p class="subtitle">Real-time monitoring, hybrid detection, and automated responses to keep your IoT networks safe.</p>
+      <div class="cta-row">
+        <a class="btn" href="features.html">Explore Features</a>
+        <a class="btn ghost" href="documents.html">View Documents</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Key Features -->
+  <section class="section" id="key-features">
+    <div class="container container-narrow">
+      <h2 class="section-title gradient">Key Features</h2>
+      <p class="section-subtitle">Highlights from IoTGuard’s capabilities.</p>
+
+      <div class="kf-grid">
+        <article class="kf-card reveal delay-1">
+          <div class="kf-icon">
+            <svg viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M3 13h2v8H3zm4-4h2v12H7zm4-4h2v16h-2zm4 6h2v10h-2zm4-8h2v18h-2z"/></svg>
+          </div>
+          <h3>Real-time Monitoring</h3>
+          <p>Visualize and analyze IoT traffic instantly for fast decisions.</p>
+          <a class="learn" href="features.html#monitoring">Learn more →</a>
+        </article>
+
+        <article class="kf-card reveal delay-2">
+          <div class="kf-icon">
+            <svg viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M12 2l9 4-9 4-9-4 9-4zm9 7l-9 4-9-4v6l9 4 9-4V9z"/></svg>
+          </div>
+          <h3>Hybrid Detection</h3>
+          <p>Signature + anomaly ML for known and unknown threats.</p>
+          <a class="learn" href="features.html#detection">Learn more →</a>
+        </article>
+
+        <article class="kf-card reveal delay-3">
+          <div class="kf-icon">
+            <svg viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M12 2a10 10 0 1010 10A10.011 10.011 0 0012 2zm1 15h-2v-2h2zm0-4h-2V7h2z"/></svg>
+          </div>
+          <h3>Automated Response</h3>
+          <p>Block IPs, isolate devices, and push alerts automatically.</p>
+          <a class="learn" href="features.html#response">Learn more →</a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Documents (homepage) -->
+  <section class="section alt" id="projects">
+    <div class="container container-narrow">
+      <h2 class="section-title gradient">Documents</h2>
+      <p class="section-subtitle">Core reports in the project lifecycle.</p>
+
+      <div class="docs-home-grid">
+        <article class="docx-card reveal delay-1">
+          <div class="docx-head">
+            <div class="docx-icon">
+              <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path fill="currentColor" d="M14 2v6h6"/></svg>
+            </div>
+            <h3>Project Specification</h3>
+          </div>
+          <p>Requirements, scope, constraints, and acceptance criteria.</p>
+          <div class="docx-actions">
+            <a class="btn pill" href="reports/specification.pdf" target="_blank" rel="noopener">View Report</a>
+          </div>
+        </article>
+
+        <article class="docx-card reveal delay-2">
+          <div class="docx-head">
+            <div class="docx-icon">
+              <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M3 3h2v18H3zM7 13h2v8H7zM11 9h2v12h-2zM15 5h2v16h-2zM19 1h2v20h-2z"/></svg>
+            </div>
+            <h3>Project Analysis Report</h3>
+          </div>
+          <p>Problem analysis, user needs, risks, and technology evaluation.</p>
+          <div class="docx-actions">
+            <a class="btn pill" href="reports/analysis.pdf" target="_blank" rel="noopener">View Report</a>
+          </div>
+        </article>
+
+        <article class="docx-card reveal delay-3">
+          <div class="docx-head">
+            <div class="docx-icon">
+              <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M9 3h6v2h-1v4.586l5.707 5.707A1 1 0 0 1 20 18H4a1 1 0 0 1-.707-1.707L10 9.586V5H9z"/></svg>
+            </div>
+            <h3>High-Level Design</h3>
+          </div>
+          <p>Architecture, components, interfaces, and implementation strategy.</p>
+          <div class="docx-actions">
+            <a class="btn pill" href="reports/design.pdf" target="_blank" rel="noopener">View Report</a>
+          </div>
+        </article>
+
+        <!-- NEW: Low-Level Design -->
+        <article class="docx-card reveal delay-4">
+          <div class="docx-head">
+            <div class="docx-icon">
+              <svg viewBox="0 0 24 24" width="20" height="20">
+                <path fill="currentColor" d="M9 2h6a2 2 0 0 1 2 2h2a2 2 0 0 1 2 2v13a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V6a2 2 0 0 1 2-2h2a2 2 0 0 1 2-2zm0 2a1 1 0 0 0-1 1v1h8V5a1 1 0 0 0-1-1H9z"/>
+                <path fill="currentColor" d="M7 11h10v2H7zm0 4h7v2H7z"/>
+              </svg>
+            </div>
+            <h3>Low-Level Design</h3>
+          </div>
+          <p>Detailed component design, data models, interfaces, and sequence/flow specs.</p>
+          <div class="docx-actions">
+            <a class="btn pill" href="reports/low-level-design.pdf" target="_blank" rel="noopener">View Report</a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Live Simulation (Animated Demo) -->
+  <section class="section no-pad" id="showcase">
+    <div class="container">
+      <div class="sim-panel reveal" aria-label="IoTGuard Live Demo">
+        <h2 class="sim-title">Live Emergency Simulation</h2>
+        <p class="sim-subtitle">Packets flow from IoT devices through Edge &amp; ML detection to automated response.</p>
+
+        <div class="demo-controls">
+          <button class="btn pill large" id="playPauseBtn">Pause</button>
+          <label class="speed">
+            <span>Speed</span>
+            <input id="speedRange" type="range" min="0.5" max="2.0" step="0.1" value="1.0" />
+          </label>
+        </div>
+
+        <div class="demo-wrap">
+          <canvas id="iotDemo" width="1000" height="340" aria-label="Animated data flow"></canvas>
+        </div>
+
+        <div class="stream card">
+          <div class="stream-head">Live Stream</div>
+          <pre class="stream-body" id="streamBody"></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container foot-grid">
+      <div>© <span id="year"></span> IoTGuard</div>
+      <div class="foot-links">
+        <a href="index.html">Home</a>
+        <a href="features.html">Features</a>
+        <a href="about.html">About</a>
+        <a href="documents.html">Documents</a>
+        <a href="references.html">References</a>
+        <a href="backlog.html">Backlog</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script>
+    // Footer year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Reveal-on-scroll
+    (function(){
+      const all = document.querySelectorAll('.reveal');
+      if (!('IntersectionObserver' in window)) { all.forEach(el=>el.classList.add('show')); return; }
+      const io = new IntersectionObserver((entries)=>{
+        entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('show'); io.unobserve(e.target); } });
+      }, {threshold:0, rootMargin:'-10% 0px -10% 0px'});
+      all.forEach(el=>io.observe(el));
+      window.addEventListener('load', ()=>setTimeout(()=>document.querySelectorAll('.reveal:not(.show)').forEach(el=>el.classList.add('show')), 250));
+    })();
+
+    // Animated nav indicator
+    (function(){
+      const menu = document.getElementById('mainMenu');
+      if(!menu) return;
+      const links = Array.from(menu.querySelectorAll('a[href]'));
+      const bar = menu.querySelector('.indicator');
+      const file = (location.pathname.split('/').pop() || 'index.html').split('?')[0];
+      const here = links.find(a => (a.getAttribute('href')||'').split('?')[0] === file) || links[0];
+
+      function moveBar(el){
+        const pad = 10;
+        bar.style.width = (el.offsetWidth - pad*2) + 'px';
+        bar.style.left  = (el.offsetLeft + pad) + 'px';
+        bar.style.opacity = 1;
+      }
+      function setActive(el){
+        links.forEach(a=>a.classList.remove('is-active'));
+        el.classList.add('is-active');
+        moveBar(el);
+      }
+      setActive(here);
+
+      links.forEach(a=>{
+        a.addEventListener('mouseenter', ()=>moveBar(a));
+        a.addEventListener('mouseleave', ()=>moveBar(menu.querySelector('.is-active') || here));
+        a.addEventListener('click', ()=>{ setActive(a); sessionStorage.setItem('iotguard_nav_active', a.getAttribute('href')); });
+      });
+
+      const saved = sessionStorage.getItem('iotguard_nav_active');
+      const savedLink = links.find(a=>a.getAttribute('href')===saved);
+      if(savedLink) setActive(savedLink);
+
+      window.addEventListener('resize', ()=> moveBar(menu.querySelector('.is-active') || here));
+    })();
+
+    // Button ripple
+    document.querySelectorAll('.btn').forEach(b=>{
+      b.addEventListener('click', e=>{
+        const r = b.getBoundingClientRect();
+        b.style.setProperty('--x', (e.clientX - r.left)+'px');
+        b.style.setProperty('--y', (e.clientY - r.top)+'px');
+        b.classList.add('rippling'); setTimeout(()=>b.classList.remove('rippling'), 500);
+      });
+    });
+
+    /* === IoTGuard Animated Demo === */
+    (function(){
+      const canvas = document.getElementById('iotDemo');
+      if(!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const logEl = document.getElementById('streamBody');
+      const playBtn = document.getElementById('playPauseBtn');
+      const speedRange = document.getElementById('speedRange');
+
+      function fit() {
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        const rect = canvas.getBoundingClientRect();
+        canvas.width = Math.floor(rect.width * dpr);
+        canvas.height = Math.floor(340 * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+      fit(); window.addEventListener('resize', fit, {passive:true});
+
+      const layout = {
+        sensors: [
+          {x: 80,  y: 80,  label:'cam-7'},
+          {x: 80,  y: 150, label:'esp32-1'},
+          {x: 80,  y: 220, label:'thermo-4'},
+          {x: 80,  y: 290, label:'meter-2'},
+        ],
+        edge:     {x: 260, y: 170, w: 120, h: 64, label: 'EDGE'},
+        detector: {x: 510, y: 170, w: 150, h: 64, label: 'ML DETECTOR'},
+        response: {x: 790, y: 170, w: 160, h: 64, label: 'RESPONSE'},
+      };
+
+      const rnd = (a,b)=> a + Math.random()*(b-a);
+      function bezierPoint(t, p0, p1, p2){
+        const u = 1 - t;
+        return { x: u*u*p0.x + 2*u*t*p1.x + t*t*p2.x,
+                 y: u*u*p0.y + 2*u*t*p1.y + t*t*p2.y };
+      }
+      function roundRect(x,y,w,h,r){
+        const rr = Math.min(r, w/2, h/2);
+        const d = new Path2D();
+        d.moveTo(x+rr,y);
+        d.arcTo(x+w,y,x+w,y+h,rr);
+        d.arcTo(x+w,y+h,x,y+h,rr);
+        d.arcTo(x,y+h,x,y,rr);
+        d.arcTo(x,y,x+w,y,rr);
+        d.closePath();
+        return d;
+      }
+
+      const packets = [];
+      let speedMult = 1.0;
+      const colors = { normal: '#9fe6c3', threat: '#fda4af' };
+
+      function createPacket() {
+        const s = layout.sensors[Math.floor(Math.random()*layout.sensors.length)];
+        const anomaly = Math.random() < 0.22;
+
+        const p0 = {x:s.x+20, y:s.y};
+        const p1 = {x:layout.edge.x-30, y: rnd(s.y, layout.edge.y)};
+        const p2 = {x:layout.edge.x+layout.edge.w, y: layout.edge.y+layout.edge.h/2};
+
+        const q0 = {x:p2.x, y:p2.y};
+        const q1 = {x:layout.detector.x-40, y: rnd(layout.edge.y, layout.detector.y)};
+        const q2 = {x:layout.detector.x+layout.detector.w, y: layout.detector.y+layout.detector.h/2};
+
+        const r0 = {x:q2.x, y:q2.y};
+        const r1 = {x:layout.response.x-40, y:rnd(layout.detector.y, layout.response.y)};
+        const r2 = {x:layout.response.x+layout.response.w, y: layout.response.y+layout.response.h/2};
+
+        const pkt = { phase: 0, t: 0, anomaly, segs: [{p0,p1,p2},{p0:q0,p1:q1,p2:q2},{p0:r0,p1:r1,p2:r2}] };
+        packets.push(pkt);
+
+        const time = new Date().toISOString().split('T')[1].split('.')[0];
+        const base = `[edge] device ${s.label} proto=${Math.random()>.5?'MQTT':'HTTP'}`;
+        if (anomaly) {
+          pushLog(`${time}  ${base}  → [detector] anomaly_score=${(0.80+rnd(0,0.18)).toFixed(2)} | class=threat`);
+          pushLog(`${time}  [response] isolated ${s.label} | blocked ip 10.0.${Math.floor(rnd(1,255))}.${Math.floor(rnd(1,255))}`);
+        } else {
+          pushLog(`${time}  ${base}  → [detector] anomaly_score=${rnd(0.01,0.25).toFixed(2)} | class=normal`);
+        }
+      }
+
+      function pushLog(msg){
+        if(!logEl) return;
+        logEl.textContent += msg + '\n';
+        const lines = logEl.textContent.split('\n');
+        if (lines.length > 200) logEl.textContent = lines.slice(-200).join('\n');
+        logEl.scrollTop = logEl.scrollHeight;
+      }
+
+      let spawnTimer = 0;
+      function update(dt){
+        spawnTimer += dt * speedMult;
+        if (spawnTimer > 500) { createPacket(); spawnTimer = 0; }
+        for (let i=packets.length-1; i>=0; i--){
+          const p = packets[i];
+          p.t += (dt/1100) * speedMult;
+          if (p.t >= 1){ p.t = 0; p.phase++; if (p.phase >= p.segs.length){ packets.splice(i,1); } }
+        }
+      }
+
+      function draw(){
+        const w = canvas.width / (window.devicePixelRatio || 1);
+        const h = canvas.height / (window.devicePixelRatio || 1);
+        ctx.clearRect(0,0,w,h);
+
+        // Decorative curves
+        ctx.globalAlpha = 0.25;
+        ctx.strokeStyle = '#93c5fd';
+        ctx.lineWidth = 2;
+        layout.sensors.forEach(s=>{
+          ctx.beginPath();
+          ctx.moveTo(s.x+20, s.y);
+          ctx.quadraticCurveTo(layout.edge.x-50, (s.y+layout.edge.y)/2, layout.edge.x+layout.edge.w, layout.edge.y+layout.edge.h/2);
+          ctx.stroke();
+        });
+        ctx.globalAlpha = 1;
+
+        // Nodes
+        function drawNode(box, label, color='#a78bfa'){
+          const path = roundRect(box.x, box.y, box.w, box.h, 12);
+          ctx.fillStyle = 'rgba(255,255,255,0.03)'; ctx.fill(path);
+          ctx.strokeStyle = color; ctx.lineWidth = 1.5; ctx.stroke(path);
+          ctx.fillStyle = '#e5e7eb'; ctx.font = '600 13px Inter,system-ui,Segoe UI,Roboto,Arial';
+          ctx.fillText(label, box.x+10, box.y+box.h/2+5);
+        }
+        layout.sensors.forEach(s=>{
+          ctx.beginPath(); ctx.arc(s.x, s.y, 10, 0, Math.PI*2);
+          ctx.fillStyle = '#0f172a'; ctx.fill();
+          ctx.strokeStyle = '#60a5fa'; ctx.lineWidth = 1.5; ctx.stroke();
+          ctx.fillStyle = '#cbd5e1'; ctx.font = '600 12px Inter,system-ui,Segoe UI,Roboto,Arial';
+          ctx.fillText(s.label, s.x+18, s.y+4);
+        });
+        drawNode(layout.edge, 'EDGE', '#60a5fa');
+        drawNode(layout.detector, 'ML DETECTOR', '#a78bfa');
+        drawNode(layout.response, 'RESPONSE', '#f472b6');
+
+        // Packets
+        packets.forEach(p=>{
+          const seg = p.segs[Math.min(p.phase, p.segs.length-1)];
+          const pos = bezierPoint(p.t, seg.p0, seg.p1, seg.p2);
+          ctx.beginPath();
+          ctx.arc(pos.x, pos.y, 4, 0, Math.PI*2);
+          ctx.fillStyle = p.anomaly ? '#fda4af' : '#9fe6c3';
+          ctx.shadowColor = ctx.fillStyle; ctx.shadowBlur = 12;
+          ctx.fill(); ctx.shadowBlur = 0;
+        });
+      }
+
+      let last = performance.now(), running = true;
+      function loop(t){
+        const dt = Math.min(48, t - last); last = t;
+        if (running){ update(dt); draw(); }
+        requestAnimationFrame(loop);
+      }
+      requestAnimationFrame(loop);
+
+      playBtn.addEventListener('click', ()=>{ running = !running; playBtn.textContent = running ? 'Pause' : 'Play'; });
+      speedRange.addEventListener('input', e=> speedMult = parseFloat(e.target.value));
+      document.addEventListener('visibilitychange',()=>{ if (document.hidden) running = false; else { running = true; playBtn.textContent='Pause'; } });
+    })();
+  </script>
+</body>
+</html>

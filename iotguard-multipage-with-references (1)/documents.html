@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>IoTGuard — Documents</title>
+  <meta name="description" content="Project reports and deliverables for IoTGuard." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=14" />
+
+  <style>
+    /* ---- Glassy navbar + indicator ---- */
+    header.nav{
+      background: rgba(8,12,18,.65);
+      backdrop-filter: saturate(140%) blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,.1);
+      position: relative;
+      z-index: 2;
+    }
+    header.nav::after{
+      content:""; position:absolute; left:0; right:0; bottom:0; height:2px;
+      background: linear-gradient(90deg,#60a5fa,#a78bfa); opacity:.45;
+    }
+    .menu{ position:relative }
+    .menu .indicator{
+      position:absolute; left:10px; bottom:6px; height:2px; width:0;
+      background: linear-gradient(90deg,#60a5fa,#a78bfa);
+      border-radius:2px; opacity:.9; pointer-events:none;
+      transition: left .28s ease, width .28s ease, opacity .28s ease;
+    }
+    .menu a::after{ content:none !important; }
+    .menu a.is-active{ color:#dbeafe; text-shadow:0 0 10px rgba(96,165,250,.25) }
+
+    /* ---- Documents page polish ---- */
+    .docs-hero{
+      background:
+        radial-gradient(60% 120% at 20% 0%, rgba(96,165,250,.20), transparent 60%),
+        radial-gradient(60% 120% at 80% 10%, rgba(139,92,246,.15), transparent 60%),
+        linear-gradient(180deg, #0b1220, transparent);
+    }
+    .docs-section{
+      padding-top: 40px;
+      background:
+        radial-gradient(45% 60% at 85% 30%, rgba(96,165,250,.08), transparent 60%),
+        radial-gradient(35% 50% at 15% 70%, rgba(139,92,246,.07), transparent 60%);
+    }
+    .doc-grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(320px,1fr)); gap: clamp(18px, 2vw, 28px); }
+    .doc-card{
+      position: relative; display: grid; grid-template-columns: 68px 1fr; gap: 16px; align-items: center;
+      padding: 22px; border-radius: 18px; border: 1px solid rgba(255,255,255,.06);
+      background: radial-gradient(120% 120% at 0% 0%, rgba(255,255,255,.03), transparent 60%),
+                  linear-gradient(180deg, var(--panel), var(--panel-alt));
+      box-shadow: 0 8px 20px rgba(0,0,0,.35), inset 0 0 0 1px rgba(255,255,255,.02);
+      transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease, background .25s ease; overflow: hidden;
+    }
+    .doc-card::before{
+      content:""; position:absolute; inset:-2px;
+      background: radial-gradient(70% 60% at 20% 10%, rgba(96,165,250,.12), transparent 60%),
+                  radial-gradient(70% 60% at 90% 30%, rgba(139,92,246,.10), transparent 60%);
+      filter: blur(6px); opacity:.7; pointer-events:none;
+    }
+    .doc-card:hover{ transform: translateY(-4px); box-shadow: 0 14px 30px rgba(0,0,0,.35); border-color: rgba(96,165,250,.35); }
+    .doc-icon{
+      width: 68px; height: 68px; display:grid; place-items:center; border-radius:16px; color: #dbeafe;
+      background: linear-gradient(180deg, rgba(96,165,250,.25), rgba(96,165,250,.12)); box-shadow: inset 0 0 0 1px rgba(96,165,250,.35);
+    }
+    .doc-body h3{margin:0 0 6px; font-size: clamp(18px, 2.2vw, 22px)}
+    .doc-body p{margin:0 0 14px; color: var(--text); opacity:.9}
+    .btn-grad{
+      display:inline-flex; align-items:center; gap:8px; padding:10px 14px; border-radius:12px; font-weight:700;
+      color:#fff; background: linear-gradient(90deg, #60a5fa, #a78bfa); box-shadow: 0 8px 18px rgba(96,165,250,.25);
+      transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
+    }
+    .btn-grad:hover{ transform: translateY(-1px); box-shadow: 0 12px 26px rgba(96,165,250,.3); filter: saturate(1.05) }
+    @media (max-width:640px){ .doc-card{ grid-template-columns: 56px 1fr } .doc-icon{ width:56px; height:56px; border-radius:14px } }
+
+    /* ---- Hero title & layering / no flicker ---- */
+    .page-hero h1{
+      font-size: clamp(38px, 6.0vw, 66px);
+      font-weight: 800; letter-spacing:.2px;
+      background: linear-gradient(90deg,#c7d2fe,#a5b4fc 40%,#a78bfa);
+      -webkit-background-clip:text; background-clip:text; color:transparent;
+    }
+    header.nav, .page-hero, .section, .footer{ position:relative; z-index:1; background:transparent }
+    .page-hero .reveal{ opacity:1 !important; transform:none !important; }
+  </style>
+</head>
+<body>
+  <!-- Ambient animated background -->
+  <div class="ambient-bg" aria-hidden="true"></div>
+
+  <!-- Navbar -->
+  <header class="nav">
+    <div class="container nav-inner">
+      <a class="brand" href="index.html">IoTGuard</a>
+      <nav class="menu" id="mainMenu">
+        <a href="index.html">Home</a>
+        <a href="features.html">Features</a>
+        <a href="about.html">About</a>
+        <a href="documents.html">Documents</a>
+        <a href="references.html">References</a>
+        <a href="backlog.html">Backlog</a>
+        <span class="indicator" aria-hidden="true"></span>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="page-hero docs-hero">
+    <div class="container">
+      <h1 class="reveal">Documents</h1>
+      <p class="subtitle reveal delay-1">Key reports that track the project lifecycle.</p>
+    </div>
+  </section>
+
+  <!-- Document Cards -->
+  <section class="section docs-section">
+    <div class="container">
+      <div class="doc-grid">
+        <!-- Project Specification -->
+        <article class="doc-card reveal delay-1">
+          <div class="doc-icon">
+            <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true">
+              <path fill="currentColor" d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <path fill="currentColor" d="M14 2v6h6"/>
+            </svg>
+          </div>
+          <div class="doc-body">
+            <h3>Project Specification</h3>
+            <p>Requirements, scope, constraints, and acceptance criteria.</p>
+            <a class="btn-grad" href="reports/specification.pdf" target="_blank" rel="noopener">View Report</a>
+          </div>
+        </article>
+
+        <!-- Project Analysis Report -->
+        <article class="doc-card reveal delay-2">
+          <div class="doc-icon">
+            <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true">
+              <path fill="currentColor" d="M3 3h2v18H3zM7 13h2v8H7zM11 9h2v12h-2zM15 5h2v16h-2zM19 1h2v20h-2z"/>
+            </svg>
+          </div>
+          <div class="doc-body">
+            <h3>Project Analysis Report</h3>
+            <p>Problem analysis, user needs, risks, and technology evaluation.</p>
+            <a class="btn-grad" href="reports/analysis.pdf" target="_blank" rel="noopener">View Report</a>
+          </div>
+        </article>
+
+        <!-- High-Level Design -->
+        <article class="doc-card reveal delay-3">
+          <div class="doc-icon">
+            <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true">
+              <path fill="currentColor" d="M9 3h6v2h-1v4.586l5.707 5.707A1 1 0 0 1 19.999 18H4a1 1 0 0 1-.707-1.707L9 9.586V5H8z"/>
+            </svg>
+          </div>
+          <div class="doc-body">
+            <h3>High-Level Design</h3>
+            <p>Architecture, components, interfaces, and implementation strategy.</p>
+            <a class="btn-grad" href="reports/design.pdf" target="_blank" rel="noopener">View Report</a>
+          </div>
+        </article>
+
+        <!-- Low-Level Design Report -->
+        <article class="doc-card reveal delay-4">
+          <div class="doc-icon">
+            <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true">
+              <path fill="currentColor" d="M9 2h6a2 2 0 0 1 2 2h2a2 2 0 0 1 2 2v13a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V6a2 2 0 0 1 2-2h2a2 2 0 0 1 2-2zm0 2a1 1 0 0 0-1 1v1h8V5a1 1 0 0 0-1-1H9z"/>
+              <path fill="currentColor" d="M7 11h10v2H7zm0 4h7v2H7z"/>
+            </svg>
+          </div>
+          <div class="doc-body">
+            <h3>Low-Level Design Report</h3>
+            <p>Detailed component design, data models, interfaces, and sequence/flow specs.</p>
+            <a class="btn-grad" href="reports/low-level-design.pdf" target="_blank" rel="noopener">View Report</a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container foot-grid">
+      <div>© <span id="year"></span> IoTGuard</div>
+      <div class="foot-links">
+        <a href="index.html">Home</a>
+        <a href="features.html">Features</a>
+        <a href="about.html">About</a>
+        <a href="documents.html">Documents</a>
+        <a href="references.html">References</a>
+        <a href="backlog.html">Backlog</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Reveal on scroll
+    (function(){
+      const all = document.querySelectorAll('.reveal');
+      if (!('IntersectionObserver' in window)) { all.forEach(el=>el.classList.add('show')); return; }
+      document.querySelectorAll('.page-hero .reveal').forEach(el=>el.classList.add('show'));
+      const io = new IntersectionObserver((entries)=>{
+        entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('show'); io.unobserve(e.target); } });
+      }, {threshold:0, rootMargin:'-10% 0px -10% 0px'});
+      all.forEach(el=>io.observe(el));
+      window.addEventListener('load', ()=>setTimeout(()=>document.querySelectorAll('.reveal:not(.show)').forEach(el=>el.classList.add('show')), 250));
+    })();
+
+    // Nav indicator
+    (function(){
+      const menu = document.getElementById('mainMenu');
+      if(!menu) return;
+      const links = Array.from(menu.querySelectorAll('a[href]'));
+      const bar = menu.querySelector('.indicator');
+      const file = (location.pathname.split('/').pop() || 'index.html').split('?')[0];
+      const here = links.find(a => (a.getAttribute('href')||'').split('?')[0] === file) || links[0];
+
+      function moveBar(el){
+        const pad = 10;
+        bar.style.width = (el.offsetWidth - pad*2) + 'px';
+        bar.style.left  = (el.offsetLeft + pad) + 'px';
+        bar.style.opacity = 1;
+      }
+      function setActive(el){
+        links.forEach(a=>a.classList.remove('is-active'));
+        el.classList.add('is-active');
+        moveBar(el);
+      }
+      setActive(here);
+      links.forEach(a=>{
+        a.addEventListener('mouseenter', ()=>moveBar(a));
+        a.addEventListener('mouseleave', ()=>moveBar(menu.querySelector('.is-active') || here));
+        a.addEventListener('click', ()=>{ setActive(a); sessionStorage.setItem('iotguard_nav_active', a.getAttribute('href')); });
+      });
+      const saved=sessionStorage.getItem('iotguard_nav_active');
+      const savedLink=links.find(a=>a.getAttribute('href')===saved);
+      if(savedLink) setActive(savedLink);
+      window.addEventListener('resize', ()=> moveBar(menu.querySelector('.is-active') || here));
+    })();
+  </script>
+</body>
+</html>
